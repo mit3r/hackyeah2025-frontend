@@ -4,7 +4,7 @@ import { animate, motion, useMotionValue } from 'motion/react';
 import { useCallback, useContext, useRef } from 'react';
 
 export default function Navbar() {
-  const { setTabNumber } = useContext(TabContext);
+  const { tab, setTabNumber } = useContext(TabContext);
 
   const x = useMotionValue(0);
   const bubble = useRef<HTMLDivElement>(null);
@@ -55,15 +55,19 @@ export default function Navbar() {
           onTouchEnd={handleTouchEnd}
           onTouchCancel={handleTouchEnd}
         >
-          <motion.div
-            ref={bubble}
-            className="pointer-events-none absolute top-0 left-0 aspect-square h-full bg-green-700"
-            style={{ x, borderRadius: '50%' }}
+          <img
+            className={clsx('pointer-events-none z-10', {
+              invert: tab !== 'searchRoute',
+            })}
+            src="location_on_24dp_CCCCCC_FILL0_wght400_GRAD0_opsz24.svg"
+            alt=""
+            width={30}
+            height={30}
           />
 
           <img
-            className={clsx('pointer-events-none', {
-              invert: true,
+            className={clsx('pointer-events-none z-10', {
+              invert: tab !== 'searchVehicle',
             })}
             src="train_24dp_CCCCCC_FILL0_wght400_GRAD0_opsz24.svg"
             alt=""
@@ -72,15 +76,9 @@ export default function Navbar() {
           />
 
           <img
-            className={clsx('pointer-events-none invert')}
-            src="location_on_24dp_CCCCCC_FILL0_wght400_GRAD0_opsz24.svg"
-            alt=""
-            width={30}
-            height={30}
-          />
-
-          <img
-            className={clsx('pointer-events-none invert')}
+            className={clsx('pointer-events-none z-10', {
+              invert: tab !== 'profile',
+            })}
             src="groups_24dp_CCCCCC_FILL0_wght400_GRAD0_opsz24.svg"
             alt=""
             width={30}
@@ -88,11 +86,19 @@ export default function Navbar() {
           />
 
           <img
-            className={clsx('pointer-events-none invert')}
+            className={clsx('pointer-events-none z-10', {
+              invert: tab !== 'options',
+            })}
             src="settings_24dp_CCCCCC_FILL0_wght400_GRAD0_opsz24.svg"
             alt=""
             width={30}
             height={30}
+          />
+
+          <motion.div
+            ref={bubble}
+            className="pointer-events-none absolute top-0 left-0 aspect-square h-full bg-green-700"
+            style={{ x, borderRadius: '50%' }}
           />
         </div>
       </div>

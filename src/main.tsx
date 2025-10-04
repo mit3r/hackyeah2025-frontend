@@ -4,13 +4,13 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import './index.css';
-import SearchPage from './pages/search';
-import TermsPage from './pages/terms';
+import HomePage from './pages/home';
 
+import { SearchProvider } from '@contexts/SearchContext';
+import { TabProvider } from '@contexts/TabContext';
 import LoginPage from '@pages/login';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import '@utils/translation';
-import { TabProvider } from '@contexts/TabContext';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -23,12 +23,13 @@ createRoot(document.getElementById('root')!).render(
             <Route
               path="/"
               element={
-                <TabProvider>
-                  <SearchPage />
-                </TabProvider>
+                <SearchProvider>
+                  <TabProvider>
+                    <HomePage />
+                  </TabProvider>
+                </SearchProvider>
               }
             />
-            <Route path="/terms" element={<TermsPage />} />
           </Routes>
         </BrowserRouter>
       </GoogleOAuthProvider>
