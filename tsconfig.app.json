@@ -40,6 +40,12 @@
       ],
       "@locales/*": [
         "./public/locales/*"
+      ],
+      "@type/*": [
+        "./src/type/*"
+      ],
+      "@contexts/*": [
+        "./src/contexts/*"
       ]
     }
   },

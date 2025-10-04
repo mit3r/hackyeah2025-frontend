@@ -1,3 +1,5 @@
 {
-  "organization": "AKAI"
+  "organization": "AKAI",
+  "your_location": "Your location",
+  "destination_location": "Destination location"
 }

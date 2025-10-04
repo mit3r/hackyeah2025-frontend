@@ -15,3 +15,13 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.my-shadow {
+  -webkit-box-shadow: 0px 0px 14px 0px rgba(66, 68, 90, 1);
+  -moz-box-shadow: 0px 0px 14px 0px rgba(66, 68, 90, 1);
+  box-shadow: 0px 0px 14px 0px rgba(66, 68, 90, 1);
+}
+
+.my-circ-grad {
+  background: radial-gradient(circle at 100% 30%, #82ad8a 30%, #ffffff00 30%);
+}
