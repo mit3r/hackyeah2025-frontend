@@ -7,7 +7,7 @@ type Props = {
   className?: string;
 };
 
-export default function RouteView(props: Props) {
+export default function OurMap(props: Props) {
   return (
     <MapContainer
       center={position}

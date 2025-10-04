@@ -3,14 +3,14 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type Props = {
-  onChange?: (value: string) => void;
-  value?: string;
-};
+// type Props = {
+//   onChange?: (value: string) => void;
+//   value?: string;
+// };
 
 const vehicles: string[] = ['IC 1234', 'IC 5678', 'IC 9012'];
 
-export default function VehicleInput(props: Props) {
+export default function VehicleInput() {
   const [t] = useTranslation('index');
 
   const search = useContext(SearchContext);
