@@ -1,9 +1,25 @@
-import { useContext, useEffect } from 'react';
 import { SearchContext } from '@contexts/SearchContext';
 import { useContext, useEffect } from 'react';
-import { SearchContext } from '@contexts/SearchContext';
+
 import { DetailsContext } from '@contexts/DetailsContext';
+import { Journey, RouteInfo, Segment, Station } from '@contexts/SearchContext/context';
+import { Route } from '@type/routes';
 import useStations from '../../hooks/useStations';
+
+type Connection = {
+  departure_station: Station;
+  arrival_station: Station;
+  route: RouteInfo;
+  route_points: {
+    scheduled_departure_time: string;
+    scheduled_arrival_time: string;
+
+    id: number;
+    station_name: string;
+    platform: string | null;
+  }[];
+  segments: Segment[];
+};
 
 export default function ListRoutes() {
   const search = useContext(SearchContext);
@@ -23,41 +39,51 @@ export default function ListRoutes() {
     return `${hours}h ${mins}min`;
   };
 
-  const handleConnectionClick = (connection: any) => {
+  const handleConnectionClick = (connection: Connection) => {
     // For direct connections, use route_points if available
     if (connection.route_points && connection.route_points.length > 0) {
       const today = new Date();
       const dateStr = today.toISOString().split('T')[0]; // Get YYYY-MM-DD
 
-      const routes = connection.route_points.slice(0, -1).map((point: any, index: number) => {
-        const nextPoint = connection.route_points[index + 1];
-
-        const departureDateTime = `${dateStr}T${point.scheduled_departure_time}`;
-        const arrivalDateTime = `${dateStr}T${nextPoint.scheduled_arrival_time}`;
-
-        return {
-          id: point.id,
-          departureName: point.station_name,
-          departurePosition: {
-            latitude: connection.departure_station.latitude,
-            longitude: connection.departure_station.longitude,
+      const routes: Route[] = connection.route_points.slice(0, -1).map(
+        (
+          point: {
+            scheduled_departure_time: string;
+            id: number;
+            station_name: string;
+            platform: string | null;
           },
-          departureTime: departureDateTime,
-          arrivalName: nextPoint.station_name,
-          arrivalPosition: {
-            latitude: connection.arrival_station.latitude,
-            longitude: connection.arrival_station.longitude,
-          },
-          arrivalTime: arrivalDateTime,
-          vehicle: connection.route
-            ? `${connection.route.line_number} • ${connection.route.carrier_name}`
-            : `Peron ${point.platform || 'TBA'}`,
-          platform: point.platform,
-          carrier: connection.route?.carrier_name || 'PKP',
-          trainNumber: connection.route?.line_number || 'N/A',
-          isTransfer: false,
-        };
-      });
+          index: number,
+        ) => {
+          const nextPoint = connection.route_points[index + 1];
+
+          const departureDateTime = `${dateStr}T${point.scheduled_departure_time}`;
+          const arrivalDateTime = `${dateStr}T${nextPoint.scheduled_arrival_time}`;
+
+          return {
+            id: point.id,
+            departureName: point.station_name,
+            departurePosition: {
+              latitude: connection.departure_station.latitude,
+              longitude: connection.departure_station.longitude,
+            },
+            departureTime: departureDateTime,
+            arrivalName: nextPoint.station_name,
+            arrivalPosition: {
+              latitude: connection.arrival_station.latitude,
+              longitude: connection.arrival_station.longitude,
+            },
+            arrivalTime: arrivalDateTime,
+            vehicle: connection.route
+              ? `${connection.route.line_number} • ${connection.route.carrier_name}`
+              : `Peron ${point.platform || 'TBA'}`,
+            platform: point.platform,
+            carrier: connection.route?.carrier_name || 'PKP',
+            trainNumber: connection.route?.line_number || 'N/A',
+            isTransfer: false,
+          };
+        },
+      );
 
       setRoute(routes);
       return;
@@ -67,7 +93,7 @@ export default function ListRoutes() {
     let currentTime = new Date();
     currentTime.setHours(8, 0, 0, 0); // Start at 8:00 AM
 
-    const routes = connection.segments.map((segment: any, index: number) => {
+    const routes = connection.segments.map((segment: Segment, index: number) => {
       const departureTime = new Date(currentTime);
 
       // Add travel time for this segment
@@ -150,7 +176,7 @@ export default function ListRoutes() {
   }
 
   return (
-    <div className="my-shadow flex h-svh w-full flex-col gap-5 overflow-y-auto rounded-2xl bg-white p-4">
+    <div className="my-shadow flex h-full w-full flex-col gap-5 overflow-y-auto rounded-2xl bg-white p-4">
       <div className="flex items-center justify-between">
         <button
           onClick={() => {
@@ -213,7 +239,7 @@ export default function ListRoutes() {
             {/* Show next journeys for direct connections */}
             {isDirect && connection.next_journeys && connection.next_journeys.length > 0 && (
               <div className="space-y-2">
-                {connection.next_journeys.map((journey: any) => {
+                {connection.next_journeys.map((journey: Journey) => {
                   const departureDate = new Date(journey.scheduled_departure);
                   const arrivalDate = new Date(journey.scheduled_arrival);
                   const hasDelay = journey.current_delay_minutes > 0;
@@ -287,11 +313,11 @@ export default function ListRoutes() {
             {hasTransfers && (
               <div
                 className="mt-3 cursor-pointer rounded-lg border-t p-2 pt-3 transition-colors hover:bg-gray-50"
-                onClick={() => handleConnectionClick(connection)}
+                onClick={() => handleConnectionClick(connection as Connection)}
               >
                 <div className="mb-2 text-sm font-medium text-gray-700">Trasa z przesiadkami:</div>
                 <div className="grid grid-cols-1 gap-1 text-xs text-gray-600">
-                  {connection.segments.map((segment: any, segIndex: number) => (
+                  {connection.segments.map((segment: Segment, segIndex: number) => (
                     <div key={segIndex} className="flex justify-between">
                       <span>
                         {segment.from_station.name} → {segment.to_station.name}

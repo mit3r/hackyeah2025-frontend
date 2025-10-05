@@ -4,7 +4,6 @@ import ViewProfile from '@pages/ViewProfile';
 import ViewSearch from '@pages/ViewSearch';
 import { useContext } from 'react';
 import Navbar from './Navbar';
-import { DetailsContext } from '@contexts/DetailsContext';
 import { SearchContext } from '@contexts/SearchContext';
 
 // import i18n from "@utils/translation";

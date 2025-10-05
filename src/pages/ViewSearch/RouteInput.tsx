@@ -1,40 +1,39 @@
 import { SearchContext } from '@contexts/SearchContext';
 import { AnimatePresence, motion } from 'motion/react';
 import { useContext, useState, useEffect } from 'react';
-import { useContext, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import useStations from '../../hooks/useStations';
 import useStations from '../../hooks/useStations';
 
 export default function RouteInput() {
   const [t] = useTranslation('index');
-  const search = useContext(SearchContext);
+  const {
+    startLocation,
+    setStartLocation,
+    endLocation,
+    setEndLocation,
+    clearConnections,
+    searchConnections,
+  } = useContext(SearchContext);
   const { filterStations, getStationByName, loading, error } = useStations();
 
   const [startFocus, setStartFocus] = useState(false);
   const [endFocus, setEndFocus] = useState(false);
 
-  const startsFiltered = filterStations(search.startLocation);
-  const endsFiltered = filterStations(search.endLocation);
+  const startsFiltered = filterStations(startLocation);
+  const endsFiltered = filterStations(endLocation);
 
   // Search for connections when both stations are selected
   useEffect(() => {
-    const startStation = getStationByName(search.startLocation);
-    const endStation = getStationByName(search.endLocation);
+    const startStation = getStationByName(startLocation);
+    const endStation = getStationByName(endLocation);
 
     if (startStation && endStation && startStation.id !== endStation.id) {
-      search.searchConnections(startStation.id, endStation.id);
-    } else if (search.startLocation || search.endLocation) {
+      searchConnections(startStation.id, endStation.id);
+    } else if (startLocation || endLocation) {
       // Only clear if there are some inputs but invalid combination
-      search.clearConnections();
+      clearConnections();
     }
-  }, [
-    search.startLocation,
-    search.endLocation,
-    getStationByName,
-    search.searchConnections,
-    search.clearConnections,
-  ]);
+  }, [startLocation, endLocation, getStationByName, searchConnections, clearConnections]);
 
   return (
     <div className="my-shadow w-full rounded-3xl bg-white p-4">
@@ -93,7 +92,7 @@ export default function RouteInput() {
                     <li
                       className="cursor-pointer p-2 hover:bg-gray-500"
                       onClick={() => {
-                        search.setStartLocation(start.name);
+                        setStartLocation(start.name);
                         setStartFocus(false);
                       }}
                       key={start.id}
@@ -165,7 +164,7 @@ export default function RouteInput() {
                     <li
                       className="cursor-pointer p-2 hover:bg-gray-500"
                       onClick={() => {
-                        search.setEndLocation(end.name);
+                        setEndLocation(end.name);
                         setEndFocus(false);
                       }}
                       key={end.id}
