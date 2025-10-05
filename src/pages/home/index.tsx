@@ -1,6 +1,6 @@
 import { TabContext } from '@contexts/TabContext';
+import ViewProfile from '@pages/ViewProfile';
 import ViewSearch from '@pages/ViewSearch';
-import { AnimatePresence } from 'motion/react';
 import { useContext } from 'react';
 import Navbar from './Navbar';
 
@@ -12,9 +12,9 @@ export default function HomePage() {
 
   return (
     <div className="my-circ-grad relative mx-auto flex h-svh max-w-xl flex-col items-center justify-center gap-3 p-3">
-      <AnimatePresence initial={false} mode="wait">
-        {tab === 'searchRoute' || tab === 'searchVehicle' ? <ViewSearch /> : null}
-      </AnimatePresence>
+      {tab === 'searchRoute' || tab === 'searchVehicle' ? <ViewSearch /> : null}
+
+      {tab === 'profile' ? <ViewProfile /> : null}
 
       {/* Navbar */}
       <Navbar />
