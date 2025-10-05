@@ -1,0 +1,48 @@
+import { useState } from 'react';
+
+const reports = ['Malfunction', 'Delay', 'Accident', 'Overcrowding'];
+
+const priorityColors = ['#00cc00', '#66cc00', '#cccc00', '#cc6600', '#cc0000'];
+
+export default function AlertForm() {
+  const [priority, setPriority] = useState<number>(1); //1-5
+
+  return (
+    <div className="absolute z-1050 flex h-full w-full flex-col justify-end p-8">
+      <div className="my-shadow flex flex-col gap-4 rounded-2xl bg-white p-4">
+        <h1 className="text-2xl">Adding a report</h1>
+        <label className="text-xl" htmlFor="">
+          Type of report
+        </label>
+        <select className="rounded-2xl border-2 p-2 text-xl" name="" id="">
+          {reports.map((report) => (
+            <option className="hover:bg-gray-200" value={report} key={report}>
+              {report}
+            </option>
+          ))}
+        </select>
+
+        <label className="text-xl" htmlFor="">
+          Description
+        </label>
+        <textarea className="rounded-2xl border-2 p-2 text-xl" name="" id="" rows={4}></textarea>
+
+        <label htmlFor="">Priority</label>
+
+        <div className="flex gap-2">
+          {new Array(5).fill(0).map((_, i) => (
+            <div
+              style={{ backgroundColor: priorityColors[i] }}
+              className={`my-shadow mx-1 h-8 w-8 cursor-pointer rounded-full border-[1px] border-white ${priority === i + 1 ? 'ring-4 ring-black' : ''}`}
+              key={i}
+              onClick={() => setPriority(i + 1)}
+            ></div>
+          ))}
+        </div>
+
+        <label htmlFor="">Estimated Time</label>
+        <input type="text" placeholder="1 hour" className="rounded-2xl border-2 p-2 text-xl" />
+      </div>
+    </div>
+  );
+}
