@@ -12,6 +12,7 @@ import LoginPage from '@pages/login';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import '@utils/translation';
 import { DetailsProvider } from '@contexts/DetailsContext';
+import { ReportProvider } from '@contexts/ReportContext';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -24,13 +25,15 @@ createRoot(document.getElementById('root')!).render(
             <Route
               path="/"
               element={
-                <DetailsProvider>
-                  <SearchProvider>
-                    <TabProvider>
-                      <HomePage />
-                    </TabProvider>
-                  </SearchProvider>
-                </DetailsProvider>
+                <ReportProvider>
+                  <DetailsProvider>
+                    <SearchProvider>
+                      <TabProvider>
+                        <HomePage />
+                      </TabProvider>
+                    </SearchProvider>
+                  </DetailsProvider>
+                </ReportProvider>
               }
             />
           </Routes>

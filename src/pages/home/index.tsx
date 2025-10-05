@@ -3,7 +3,6 @@ import ViewProfile from '@pages/ViewProfile';
 import ViewSearch from '@pages/ViewSearch';
 import { useContext } from 'react';
 import Navbar from './Navbar';
-import AlertForm from '@components/AlertForm';
 
 // import i18n from "@utils/translation";
 // i18n.changeLanguage("")
@@ -16,8 +15,6 @@ export default function HomePage() {
       {tab === 'searchRoute' || tab === 'searchVehicle' ? <ViewSearch /> : null}
 
       {tab === 'profile' ? <ViewProfile /> : null}
-
-      <AlertForm />
 
       <Navbar />
     </div>

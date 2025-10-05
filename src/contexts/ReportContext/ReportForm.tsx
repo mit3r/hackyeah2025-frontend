@@ -1,16 +1,27 @@
+import PopButton from '@components/Alerts/PopButton';
 import { useState } from 'react';
 
 const reports = ['Malfunction', 'Delay', 'Accident', 'Overcrowding'];
 
 const priorityColors = ['#00cc00', '#66cc00', '#cccc00', '#cc6600', '#cc0000'];
 
-export default function AlertForm() {
+export default function ReportForm({ onClose }: { onClose?: () => void }) {
   const [priority, setPriority] = useState<number>(1); //1-5
 
+  const handleSubmit = () => {};
+
   return (
-    <div className="absolute z-1050 flex h-full w-full flex-col justify-end p-8">
-      <div className="my-shadow flex flex-col gap-4 rounded-2xl bg-white p-4">
-        <h1 className="text-2xl">Adding a report</h1>
+    <div className="absolute z-1050 flex h-full w-full flex-col justify-end p-4 backdrop-brightness-50">
+      <div className="my-shadow flex flex-col gap-4 rounded-2xl bg-gray-200 p-6">
+        <span className="flex items-center justify-between">
+          <h1 className="text-2xl">Adding a report</h1>
+          <img
+            className="invert"
+            onClick={onClose}
+            src="close_24dp_CCCCCC_FILL0_wght400_GRAD0_opsz24.svg"
+            alt=""
+          />
+        </span>
         <label className="text-xl" htmlFor="">
           Type of report
         </label>
@@ -42,6 +53,10 @@ export default function AlertForm() {
 
         <label htmlFor="">Estimated Time</label>
         <input type="text" placeholder="1 hour" className="rounded-2xl border-2 p-2 text-xl" />
+
+        <PopButton onClick={handleSubmit}>
+          <span className="text-xl">Submit Report</span>
+        </PopButton>
       </div>
     </div>
   );
