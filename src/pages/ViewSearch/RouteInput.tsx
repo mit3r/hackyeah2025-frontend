@@ -90,7 +90,7 @@ export default function RouteInput() {
                 ) : (
                   startsFiltered.map((start) => (
                     <li
-                      className="cursor-pointer p-2 hover:bg-gray-500"
+                      className="cursor-pointer p-2"
                       onClick={() => {
                         setStartLocation(start.name);
                         setStartFocus(false);
