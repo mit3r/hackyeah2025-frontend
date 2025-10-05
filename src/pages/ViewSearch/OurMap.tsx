@@ -2,7 +2,7 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import { twMerge } from 'tailwind-merge';
 import MapTracks from './MapTracks';
 
-const position: [number, number] = [50.06784, 19.9913];
+const position: [number, number] = [50.06955848386509, 19.947439153613043];
 
 type Props = {
   className?: string;

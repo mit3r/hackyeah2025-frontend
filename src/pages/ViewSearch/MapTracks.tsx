@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Marker, Popup, useMap } from 'react-leaflet';
 
 type TrackData = {
@@ -45,7 +45,6 @@ export default function MapTracks() {
       });
   }, [map]);
 
-  console.log(data?.locations);
   return data !== null
     ? data.locations.map((location) => (
         <Marker key={location.vehicle_id} position={[location.latitude, location.longitude]}>
