@@ -41,7 +41,7 @@ export default function RouteInput() {
             alt=""
           />
         </label>
-        <div className="relative z-1002 flex w-full items-center justify-between">
+        <div className="relative z-1010 flex w-full items-center justify-between">
           <input
             type="text"
             id="start_location"
@@ -66,7 +66,7 @@ export default function RouteInput() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="absolute top-full z-1000 flex w-full flex-col rounded-b-2xl border-2 bg-white p-2 shadow-md"
+                className="absolute top-full z-1011 flex w-full flex-col rounded-b-2xl border-2 bg-white p-2 shadow-md"
               >
                 {startsFiltered.map((start) => (
                   <li

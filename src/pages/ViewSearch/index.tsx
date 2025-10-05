@@ -5,12 +5,32 @@ import RouteInput from '@pages/ViewSearch/RouteInput';
 import TimeInput from '@pages/ViewSearch/TimeInput';
 import VehicleInput from '@pages/ViewSearch/VehicleInput';
 import { AnimatePresence, motion } from 'motion/react';
-import { useContext } from 'react';
-import ListRoute from './ListRoute';
+import { useContext, useMemo } from 'react';
+import RoutePreview from './RoutePreview';
+import { SearchContext } from '@contexts/SearchContext';
+import ListRoutes from './ListRoutes';
+import { DetailsContext } from '@contexts/DetailsContext';
 
 export default function ViewSearch() {
   const { tab } = useContext(TabContext);
-  // const { startLocation, endLocation } = useContext(SearchContext);
+  const { startLocation, endLocation } = useContext(SearchContext);
+  const { route } = useContext(DetailsContext);
+
+  const searched =
+    startLocation !== '' &&
+    endLocation !== '' &&
+    (tab === 'searchRoute' || tab === 'searchVehicle');
+
+  const showRoutesList = useMemo(() => searched && route === null, [searched, route]);
+
+  const showRoutePreview = useMemo(() => searched && route !== null, [searched, route]);
+
+  const showMap = useMemo(
+    () =>
+      (tab === 'searchRoute' || tab === 'searchVehicle') &&
+      (startLocation === '' || endLocation === ''),
+    [tab, startLocation, endLocation],
+  );
 
   return (
     <>
@@ -64,31 +84,44 @@ export default function ViewSearch() {
         </motion.div>
       )}
 
-      {/* <AnimatePresence>
-        {startLocation !== '' && endLocation !== '' && (
+      <AnimatePresence>
+        {showRoutesList && (
           <motion.div
-            className="w-full"
-            initial={{ height: 0 }}
-            animate={{ height: 'auto' }}
-            exit={{ height: 0 }}
+            key="routesList"
+            className="w-full flex-1"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
           >
             <ListRoutes />
           </motion.div>
         )}
-      </AnimatePresence> */}
 
-      <AnimatePresence>
-        {
-          <motion.div className="w-full">
-            <ListRoute />
+        {showRoutePreview && (
+          <motion.div
+            key="routePreview"
+            className="w-full flex-1"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+          >
+            <RoutePreview />
           </motion.div>
-        }
-      </AnimatePresence>
+        )}
 
-      {/* Map */}
-      <motion.div className="h-full w-full rounded-2xl bg-white p-2">
-        <OurMap className="h-full w-full flex-1 rounded-2xl" />
-      </motion.div>
+        {/* Map */}
+        {showMap && (
+          <motion.div
+            key="map"
+            className="h-full w-full rounded-2xl bg-white p-2"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+          >
+            <OurMap className="h-full w-full flex-1 rounded-2xl" />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

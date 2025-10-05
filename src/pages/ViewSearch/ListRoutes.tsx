@@ -1,4 +1,6 @@
+import { DetailsContext } from '@contexts/DetailsContext';
 import { Route } from '@type/routes';
+import { useContext } from 'react';
 
 const routes: Route[][] = [
   [
@@ -15,6 +17,27 @@ const routes: Route[][] = [
     {
       id: 2,
       departureName: 'Jaworzno',
+      departurePosition: { latitude: 0, longitude: 0 },
+      departureTime: '2025-10-05T01:02:00',
+      arrivalName: 'Kraków Główny',
+      arrivalPosition: { latitude: 0, longitude: 0 },
+      arrivalTime: '2025-10-05T05:00:00',
+      vehicle: 'IC 5678',
+    },
+    {
+      id: 3,
+      departureName: 'Jaworzno',
+      departurePosition: { latitude: 0, longitude: 0 },
+      departureTime: '2025-10-05T01:02:00',
+      arrivalName: 'Kraków Główny',
+      arrivalPosition: { latitude: 0, longitude: 0 },
+      arrivalTime: '2025-10-05T05:00:00',
+      vehicle: 'IC 5678',
+    },
+
+    {
+      id: 4,
+      departureName: 'Kraków Główny',
       departurePosition: { latitude: 0, longitude: 0 },
       departureTime: '2025-10-05T01:02:00',
       arrivalName: 'Kraków Główny',
@@ -39,7 +62,7 @@ const routes: Route[][] = [
 
 export default function ListRoutes() {
   return (
-    <div className="my-shadow flex w-full flex-col gap-5 rounded-2xl bg-white p-4">
+    <div className="my-shadow flex h-[calc(100%-7rem)] w-full flex-col gap-5 overflow-y-auto rounded-2xl bg-white p-4">
       <h2 className="text-center text-xl">Available routes</h2>
 
       {routes.map((route, i) => (
@@ -50,13 +73,16 @@ export default function ListRoutes() {
 }
 
 function ListRouteItem({ route }: { route: Route[] }) {
+  const { setRoute } = useContext(DetailsContext);
+
   const depTime = new Date(route.at(0)?.departureTime ?? '');
   const arrTime = new Date(route.at(-1)?.arrivalTime ?? '');
 
   return (
-    <div
+    <button
       className="my-shadow w-full overflow-y-auto rounded-2xl bg-neutral-300 p-4 transition-all hover:scale-105 active:scale-95"
       key={route[0].id}
+      onClick={() => setRoute(route)}
     >
       <div className="flex w-full justify-between">
         <h3 className="font-bold">za 50 min</h3>{' '}
@@ -77,6 +103,6 @@ function ListRouteItem({ route }: { route: Route[] }) {
         <span>🚶‍➡️</span>
         <h4 className="text-gray-500">{route.at(-1)?.arrivalName.slice(0, 15)}</h4>
       </div>
-    </div>
+    </button>
   );
 }
