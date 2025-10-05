@@ -10,6 +10,7 @@ import RoutePreview from './RoutePreview';
 import { SearchContext } from '@contexts/SearchContext';
 import ListRoutes from './ListRoutes';
 import { DetailsContext } from '@contexts/DetailsContext';
+import Alerts from '@components/Alerts/Alerts';
 
 export default function ViewSearch() {
   const { tab } = useContext(TabContext);
@@ -121,6 +122,11 @@ export default function ViewSearch() {
             <OurMap className="h-full w-full flex-1 rounded-2xl" />
           </motion.div>
         )}
+
+        {/* Alerts */}
+        <AnimatePresence>
+          <Alerts />
+        </AnimatePresence>
       </AnimatePresence>
     </>
   );
