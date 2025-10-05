@@ -263,7 +263,7 @@ export default function ListRoutes() {
                         arrivalTime: journey.scheduled_arrival,
                         vehicle: connection.route
                           ? `${connection.route.line_number} • ${connection.route.carrier_name}`
-                          : 'Train',
+                          : 'Pociąg',
                         platform: null,
                         carrier: connection.route?.carrier_name || 'PKP',
                         trainNumber: connection.route?.line_number || 'N/A',

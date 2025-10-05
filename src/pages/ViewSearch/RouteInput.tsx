@@ -82,11 +82,11 @@ export default function RouteInput() {
                 className="absolute top-full z-1011 flex w-full flex-col rounded-b-2xl border-2 bg-white p-2 shadow-md"
               >
                 {loading ? (
-                  <li className="p-2 text-gray-500">Loading...</li>
+                  <li className="p-2 text-gray-500">Ładowanie...</li>
                 ) : error ? (
-                  <li className="p-2 text-red-500">Error loading stations</li>
+                  <li className="p-2 text-red-500">Błąd podczas ładowania stacji</li>
                 ) : startsFiltered.length === 0 ? (
-                  <li className="p-2 text-gray-500">No results</li>
+                  <li className="p-2 text-gray-500">Brak wyników</li>
                 ) : (
                   startsFiltered.map((start) => (
                     <li
@@ -154,11 +154,11 @@ export default function RouteInput() {
                 className="absolute top-full z-1000 flex w-full flex-col rounded-b-2xl border-2 bg-white p-2 shadow-md"
               >
                 {loading ? (
-                  <li className="p-2 text-gray-500">Loading...</li>
+                  <li className="p-2 text-gray-500">Ładowanie...</li>
                 ) : error ? (
-                  <li className="p-2 text-red-500">Error loading stations</li>
+                  <li className="p-2 text-red-500">Błąd podczas ładowania stacji</li>
                 ) : endsFiltered.length === 0 ? (
-                  <li className="p-2 text-gray-500">No results</li>
+                  <li className="p-2 text-gray-500">Brak wyników</li>
                 ) : (
                   endsFiltered.map((end) => (
                     <li

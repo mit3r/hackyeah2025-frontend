@@ -1,3 +1,8 @@
 {
-  "organization": "AKAI"
+  "organization": "AKAI",
+  "your_location": "Twoja lokalizacja",
+  "destination_location": "Miejsce docelowe",
+  "search_a_vehicle": "Wyszukaj pojazd",
+  "route": "Trasa",
+  "train": "Pociąg"
 }
