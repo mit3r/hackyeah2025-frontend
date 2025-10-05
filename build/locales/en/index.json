@@ -2,5 +2,7 @@
   "organization": "AKAI",
   "your_location": "Your location",
   "destination_location": "Destination location",
-  "search_a_vehicle": "Search a vehicle"
+  "search_a_vehicle": "Search a vehicle",
+  "route": "Route",
+  "train": "Train"
 }

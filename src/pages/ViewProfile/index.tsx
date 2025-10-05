@@ -1,6 +1,13 @@
+import { motion } from 'motion/react';
+
 export default function ViewProfile() {
   return (
-    <div className="h-full w-full py-8 pb-28">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="h-full w-full py-8 pb-28"
+    >
       <div className="my-shadow flex h-full w-full flex-col gap-4 rounded-2xl bg-white p-4">
         <h1 className="flex items-center gap-2 text-2xl">
           <img
@@ -37,6 +44,6 @@ export default function ViewProfile() {
         </div>
         <p>Ranks affect the weight and credibility of reports.</p>
       </div>
-    </div>
+    </motion.div>
   );
 }

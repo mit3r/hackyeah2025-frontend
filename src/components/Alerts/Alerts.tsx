@@ -8,7 +8,7 @@ import Thanks from './Thanks';
 export type Alert = 'LongDelay' | 'NoAirConditioning' | 'Overcrowded' | 'Malfunction' | 'Thanks';
 
 export default function Alerts() {
-  const [alerts, setAlerts] = useState<Alert | null>('Thanks');
+  const [alerts, setAlerts] = useState<Alert | null>(null);
 
   const websocket = useRef<WebSocket | null>(null);
 
