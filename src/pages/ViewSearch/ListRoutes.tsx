@@ -26,7 +26,46 @@ export default function ListRoutes() {
   };
 
   const handleConnectionClick = (connection: any) => {
-    // Calculate estimated times based on segments
+    // For direct connections, use route_points if available
+    if (connection.route_points && connection.route_points.length > 0) {
+      const today = new Date();
+      const dateStr = today.toISOString().split('T')[0]; // Get YYYY-MM-DD
+      
+      const routes = connection.route_points.slice(0, -1).map((point: any, index: number) => {
+        const nextPoint = connection.route_points[index + 1];
+        
+        const departureDateTime = `${dateStr}T${point.scheduled_departure_time}`;
+        const arrivalDateTime = `${dateStr}T${nextPoint.scheduled_arrival_time}`;
+        
+        return {
+          id: point.id,
+          departureName: point.station_name,
+          departurePosition: {
+            latitude: connection.departure_station.latitude,
+            longitude: connection.departure_station.longitude
+          },
+          departureTime: departureDateTime,
+          arrivalName: nextPoint.station_name,
+          arrivalPosition: {
+            latitude: connection.arrival_station.latitude,
+            longitude: connection.arrival_station.longitude
+          },
+          arrivalTime: arrivalDateTime,
+          vehicle: connection.route ? 
+            `${connection.route.line_number} • ${connection.route.carrier_name}` : 
+            `Peron ${point.platform || 'TBA'}`,
+          platform: point.platform,
+          carrier: connection.route?.carrier_name || 'PKP',
+          trainNumber: connection.route?.line_number || 'N/A',
+          isTransfer: false
+        };
+      });
+      
+      setRoute(routes);
+      return;
+    }
+    
+    // For connections with transfers, use segments
     let currentTime = new Date();
     currentTime.setHours(8, 0, 0, 0); // Start at 8:00 AM
     
@@ -134,32 +173,110 @@ export default function ListRoutes() {
 
       {connections.map((connection, index) => {
         const hasTransfers = connection.transfers_count > 0;
+        const isDirect = !hasTransfers && connection.route;
         
         return (
           <div 
             key={index} 
-            className="border-b border-gray-200 pb-4 last:border-b-0 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors"
-            onClick={() => handleConnectionClick(connection)}
+            className="border-b border-gray-200 pb-4 last:border-b-0"
           >
             {/* Main connection info */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-2">
               <div className="flex flex-col">
                 <div className="font-semibold">
                   {connection.departure_station.name} → {connection.arrival_station.name}
                 </div>
                 <div className="text-sm text-gray-600">
-                  {hasTransfers ? `${connection.transfers_count} przesiadka${connection.transfers_count > 1 ? 'i' : ''}` : 'Bezpośrednie'} • {formatTime(connection.total_travel_time_minutes)}
+                  {isDirect && connection.route && (
+                    <span className="font-medium text-blue-600">
+                      {connection.route.line_number} • {connection.route.carrier_name}
+                    </span>
+                  )}
+                  {!isDirect && (
+                    <span>
+                      {hasTransfers ? `${connection.transfers_count} przesiadka${connection.transfers_count > 1 ? 'i' : ''}` : 'Bezpośrednie'} • {formatTime(connection.total_travel_time_minutes)}
+                    </span>
+                  )}
                 </div>
               </div>
               <div className="text-right">
                 <div className="text-sm text-gray-600">{connection.total_distance_km}km</div>
-                <div className="text-xs text-green-600">Dostępne</div>
+                {isDirect && (
+                  <div className="text-xs text-gray-500">{formatTime(connection.total_travel_time_minutes)}</div>
+                )}
               </div>
             </div>
 
+            {/* Show next journeys for direct connections */}
+            {isDirect && connection.next_journeys && connection.next_journeys.length > 0 && (
+              <div className="space-y-2">
+                {connection.next_journeys.map((journey: any) => {
+                  const departureDate = new Date(journey.scheduled_departure);
+                  const arrivalDate = new Date(journey.scheduled_arrival);
+                  const hasDelay = journey.current_delay_minutes > 0;
+                  
+                  const handleJourneyClick = () => {
+                    // Create route using journey times instead of connection times
+                    const routes = [{
+                      id: journey.id,
+                      departureName: connection.departure_station.name,
+                      departurePosition: {
+                        latitude: connection.departure_station.latitude,
+                        longitude: connection.departure_station.longitude
+                      },
+                      departureTime: journey.scheduled_departure,
+                      arrivalName: connection.arrival_station.name,
+                      arrivalPosition: {
+                        latitude: connection.arrival_station.latitude,
+                        longitude: connection.arrival_station.longitude
+                      },
+                      arrivalTime: journey.scheduled_arrival,
+                      vehicle: connection.route ? 
+                        `${connection.route.line_number} • ${connection.route.carrier_name}` : 
+                        'Train',
+                      platform: null,
+                      carrier: connection.route?.carrier_name || 'PKP',
+                      trainNumber: connection.route?.line_number || 'N/A',
+                      isTransfer: false,
+                      delay: hasDelay ? journey.current_delay_minutes : 0
+                    }];
+                    setRoute(routes);
+                  };
+                  
+                  return (
+                    <div
+                      key={journey.id}
+                      className="cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors border border-gray-100"
+                      onClick={handleJourneyClick}
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="flex flex-col">
+                          <div className="text-sm font-medium">
+                            {departureDate.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })} 
+                            {' → '}
+                            {arrivalDate.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                          {hasDelay && (
+                            <div className="text-xs text-orange-600">
+                              Opóźnienie: {journey.current_delay_minutes} min
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-xs text-green-600">
+                          {journey.status === 'SCHEDULED' ? 'Zaplanowane' : journey.status}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
             {/* Show segments for transfers */}
             {hasTransfers && (
-              <div className="mt-3 border-t pt-3">
+              <div className="mt-3 border-t pt-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                onClick={() => handleConnectionClick(connection)}
+              >
                 <div className="text-sm font-medium text-gray-700 mb-2">Trasa z przesiadkami:</div>
                 <div className="grid grid-cols-1 gap-1 text-xs text-gray-600">
                   {connection.segments.map((segment: any, segIndex: number) => (

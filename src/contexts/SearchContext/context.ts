@@ -15,6 +15,66 @@ export interface Station {
   updated_at: string;
 }
 
+export interface RouteInfo {
+  id: number;
+  name: string;
+  line_number: string;
+  carrier: number;
+  carrier_name: string;
+  vehicle: number;
+  vehicle_name: string | null;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RoutePoint {
+  id: number;
+  station: number;
+  station_name: string;
+  platform: number | null;
+  platform_name: string | null;
+  sequence: number;
+  scheduled_arrival_time: string;
+  scheduled_departure_time: string;
+  stop_duration_minutes: number;
+  distance_from_previous_km: number;
+}
+
+export interface Journey {
+  id: number;
+  route: number;
+  route_info: RouteInfo;
+  journey_date: string;
+  scheduled_departure: string;
+  actual_departure: string | null;
+  scheduled_arrival: string;
+  actual_arrival: string | null;
+  status: string;
+  current_delay_minutes: number;
+  start_station: {
+    id: number;
+    name: string;
+  };
+  end_station: {
+    id: number;
+    name: string;
+  };
+}
+
+export interface DirectConnection {
+  route: RouteInfo;
+  departure_station: Station;
+  arrival_station: Station;
+  departure_time: string;
+  arrival_time: string;
+  travel_time_minutes: number;
+  distance_km: number;
+  stops_count: number;
+  route_points: RoutePoint[];
+  next_journeys: Journey[];
+}
+
 export interface Segment {
   from_station: Station;
   to_station: Station;
@@ -31,6 +91,12 @@ export interface Connection {
   total_travel_time_minutes: number;
   stops_count: number;
   transfers_count: number;
+  // Add support for direct connections
+  route?: RouteInfo;
+  departure_time?: string;
+  arrival_time?: string;
+  route_points?: RoutePoint[];
+  next_journeys?: Journey[];
 }
 
 export const SearchContext = createContext<{

@@ -14,8 +14,10 @@ export default function RoutePreview() {
     setRoute(null);
   };
 
-  // Generate random delay prediction
-  const delayPrediction = Math.random() > 0.7 ? Math.floor(Math.random() * 15) + 2 : 0;
+  // Get delay from route data if available
+  const delayPrediction = route && route.length > 0 && (route[0] as any).delay 
+    ? (route[0] as any).delay 
+    : 0;
 
   // Calculate total journey info
   const totalInfo = route ? (() => {
@@ -23,6 +25,20 @@ export default function RoutePreview() {
     const lastSegment = route[route.length - 1];
     const startTime = new Date(firstSegment.departureTime);
     const endTime = new Date(lastSegment.arrivalTime);
+    
+    // Check if dates are valid
+    if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
+      return {
+        from: firstSegment.departureName,
+        to: lastSegment.arrivalName,
+        startTime: 'N/A',
+        endTime: 'N/A',
+        duration: 'N/A',
+        segments: route.length,
+        transfers: route.length - 1
+      };
+    }
+    
     const totalDuration = endTime.getTime() - startTime.getTime();
     const totalMinutes = Math.round(totalDuration / (1000 * 60));
     const hours = Math.floor(totalMinutes / 60);
@@ -31,8 +47,8 @@ export default function RoutePreview() {
     return {
       from: firstSegment.departureName,
       to: lastSegment.arrivalName,
-      startTime: startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      endTime: endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      startTime: startTime.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }),
+      endTime: endTime.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }),
       duration: hours > 0 ? `${hours}h ${minutes}min` : `${minutes}min`,
       segments: route.length,
       transfers: route.length - 1
@@ -101,27 +117,33 @@ export default function RoutePreview() {
 }
 
 function Segment({ segment, end }: { segment: Route; end: boolean }) {
-  const departureTime = new Date(segment.departureTime).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-
-  const arrivalTime = new Date(segment.arrivalTime).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-
-  // Calculate duration
   const depTime = new Date(segment.departureTime);
   const arrTime = new Date(segment.arrivalTime);
-  const durationMs = arrTime.getTime() - depTime.getTime();
-  const durationMinutes = Math.round(durationMs / (1000 * 60));
-  const hours = Math.floor(durationMinutes / 60);
-  const minutes = durationMinutes % 60;
-  const durationText = hours > 0 ? `${hours}h ${minutes}min` : `${minutes}min`;
+  
+  // Check if dates are valid
+  const isValidDep = !isNaN(depTime.getTime());
+  const isValidArr = !isNaN(arrTime.getTime());
+  
+  const departureTime = isValidDep 
+    ? depTime.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })
+    : 'N/A';
 
-  // Generate random delay for this segment
-  const segmentDelay = Math.random() > 0.8 ? Math.floor(Math.random() * 8) + 1 : 0;
+  const arrivalTime = isValidArr
+    ? arrTime.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })
+    : 'N/A';
+
+  // Calculate duration
+  let durationText = 'N/A';
+  if (isValidDep && isValidArr) {
+    const durationMs = arrTime.getTime() - depTime.getTime();
+    const durationMinutes = Math.round(durationMs / (1000 * 60));
+    const hours = Math.floor(durationMinutes / 60);
+    const minutes = durationMinutes % 60;
+    durationText = hours > 0 ? `${hours}h ${minutes}min` : `${minutes}min`;
+  }
+
+  // Get delay from segment data if available
+  const segmentDelay = (segment as any).delay || 0;
 
   return (
     <div className="mb-4">

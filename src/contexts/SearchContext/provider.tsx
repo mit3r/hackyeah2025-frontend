@@ -38,11 +38,43 @@ export default function SearchProvider(props: { children: React.ReactNode }) {
       console.log('API Response:', data);
       
       // Extract connections from the response
-      if (data && data.connections && Array.isArray(data.connections)) {
-        setConnections(data.connections.slice(0, 10)); // Limit to 10 connections max
-      } else {
-        console.warn('Unexpected API response format:', data);
-        setConnections([]);
+      const allConnections: Connection[] = [];
+      
+      // Process direct connections
+      if (data.direct_connections && Array.isArray(data.direct_connections)) {
+        const directConnections = data.direct_connections.map((dc: any) => ({
+          departure_station: dc.departure_station,
+          arrival_station: dc.arrival_station,
+          segments: [{
+            from_station: dc.departure_station,
+            to_station: dc.arrival_station,
+            distance_km: dc.distance_km,
+            time_minutes: dc.travel_time_minutes,
+            max_speed_kmh: 0
+          }],
+          total_distance_km: dc.distance_km,
+          total_travel_time_minutes: dc.travel_time_minutes,
+          stops_count: dc.stops_count,
+          transfers_count: 0,
+          route: dc.route,
+          departure_time: dc.departure_time,
+          arrival_time: dc.arrival_time,
+          route_points: dc.route_points,
+          next_journeys: dc.next_journeys
+        }));
+        allConnections.push(...directConnections);
+      }
+      
+      // Process connections with transfers
+      if (data.connections_with_transfers && Array.isArray(data.connections_with_transfers)) {
+        allConnections.push(...data.connections_with_transfers);
+      }
+      
+      console.log('Processed connections:', allConnections);
+      setConnections(allConnections.slice(0, 10)); // Limit to 10 connections max
+      
+      if (allConnections.length === 0) {
+        console.warn('No connections found in API response');
       }
     } catch (err) {
       setConnectionsError(err instanceof Error ? err.message : 'Failed to fetch connections');
