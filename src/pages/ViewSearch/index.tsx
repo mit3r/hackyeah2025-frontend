@@ -11,6 +11,7 @@ import { SearchContext } from '@contexts/SearchContext';
 import ListRoutes from './ListRoutes';
 import { DetailsContext } from '@contexts/DetailsContext';
 import Alerts from '@components/Alerts/Alerts';
+import Pill from './Pill';
 
 export default function ViewSearch() {
   const { tab } = useContext(TabContext);
@@ -18,8 +19,8 @@ export default function ViewSearch() {
   const { route } = useContext(DetailsContext);
 
   const searched =
-    (startLocation !== '' &&
-    endLocation !== '') &&
+    startLocation !== '' &&
+    endLocation !== '' &&
     (tab === 'searchRoute' || tab === 'searchVehicle');
 
   const showRoutesList = useMemo(() => searched && route === null, [searched, route]);
@@ -37,7 +38,7 @@ export default function ViewSearch() {
     <>
       {/* Search bar */}
       <AnimatePresence initial={false} mode="wait">
-        {(
+        {
           <motion.div
             className="w-full"
             key={tab}
@@ -71,21 +72,27 @@ export default function ViewSearch() {
               </motion.div>
             )}
           </motion.div>
-        )}
+        }
       </AnimatePresence>
 
-      {(tab === 'searchRoute' || tab === 'searchVehicle') && !showRoutesList && !showRoutePreview && (
-        <motion.div
-          layout
-          className="flex w-full justify-between"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <TimeInput />
-          <EraseButton />
-        </motion.div>
-      )}
+      {(tab === 'searchRoute' || tab === 'searchVehicle') &&
+        !showRoutesList &&
+        !showRoutePreview && (
+          <motion.div
+            layout
+            className="flex w-full justify-between"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <TimeInput />
+            <EraseButton />
+          </motion.div>
+        )}
+
+      <AnimatePresence>
+        <Pill />
+      </AnimatePresence>
 
       <AnimatePresence>
         {showRoutesList && (
