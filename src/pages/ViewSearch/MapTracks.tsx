@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Marker, Popup, useMap } from 'react-leaflet';
 
 type TrackData = {

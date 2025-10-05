@@ -1,5 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Station } from '../contexts/SearchContext/context';
+
+const mockStations = ['Kraków Główny', 'Warszawa Centralna', 'Katowice'];
+
 export default function useStations() {
   const [stations, setStations] = useState<string[]>([]);
   const [allStations, setAllStations] = useState<Station[]>([]);
@@ -17,7 +20,7 @@ export default function useStations() {
         }
 
         const data: Station[] = await response.json();
-        setAllStations(data);
+        setAllStations(data.filter((station) => mockStations.includes(station.name)));
         const stationNames = data.map((station) => station.name);
         setStations(stationNames);
       } catch (err) {
