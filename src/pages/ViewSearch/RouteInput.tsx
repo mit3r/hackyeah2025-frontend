@@ -1,32 +1,32 @@
 import { SearchContext } from '@contexts/SearchContext';
 import { AnimatePresence, motion } from 'motion/react';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-
-const starts = [
-  'Poznań Główny',
-  'Kraków Główny',
-  'Warszawa Centralna',
-  'Wrocław Główny',
-  'Gdańsk Główny',
-];
-
-const ends = [...starts];
+import useStations from '../../hooks/useStations';
 
 export default function RouteInput() {
   const [t] = useTranslation('index');
-
   const search = useContext(SearchContext);
+  const { filterStations, getStationByName, loading, error } = useStations();
 
   const [startFocus, setStartFocus] = useState(false);
-  const startsFiltered = starts.filter((start) =>
-    start.toLowerCase().includes(search.startLocation.toLowerCase()),
-  );
-
   const [endFocus, setEndFocus] = useState(false);
-  const endsFiltered = ends.filter((end) =>
-    end.toLowerCase().includes(search.endLocation.toLowerCase()),
-  );
+
+  const startsFiltered = filterStations(search.startLocation);
+  const endsFiltered = filterStations(search.endLocation);
+
+  // Search for connections when both stations are selected
+  useEffect(() => {
+    const startStation = getStationByName(search.startLocation);
+    const endStation = getStationByName(search.endLocation);
+    
+    if (startStation && endStation && startStation.id !== endStation.id) {
+      search.searchConnections(startStation.id, endStation.id);
+    } else if (search.startLocation || search.endLocation) {
+      // Only clear if there are some inputs but invalid combination
+      search.clearConnections();
+    }
+  }, [search.startLocation, search.endLocation, getStationByName, search.searchConnections, search.clearConnections]);
 
   return (
     <div className="my-shadow w-full rounded-3xl bg-white p-4">
@@ -68,18 +68,26 @@ export default function RouteInput() {
                 exit={{ opacity: 0, y: 10 }}
                 className="absolute top-full z-1011 flex w-full flex-col rounded-b-2xl border-2 bg-white p-2 shadow-md"
               >
-                {startsFiltered.map((start) => (
-                  <li
-                    className="cursor-pointer p-2 hover:bg-gray-500"
-                    onClick={() => {
-                      search.setStartLocation(start);
-                      setStartFocus(false);
-                    }}
-                    key={start}
-                  >
-                    {start}
-                  </li>
-                ))}
+                {loading ? (
+                  <li className="p-2 text-gray-500">Loading...</li>
+                ) : error ? (
+                  <li className="p-2 text-red-500">Error loading stations</li>
+                ) : startsFiltered.length === 0 ? (
+                  <li className="p-2 text-gray-500">No results</li>
+                ) : (
+                  startsFiltered.map((start) => (
+                    <li
+                      className="cursor-pointer p-2 hover:bg-gray-500"
+                      onClick={() => {
+                        search.setStartLocation(start.name);
+                        setStartFocus(false);
+                      }}
+                      key={start.id}
+                    >
+                      {start.name}
+                    </li>
+                  ))
+                )}
               </motion.ol>
             )}
           </AnimatePresence>
@@ -124,18 +132,26 @@ export default function RouteInput() {
                 exit={{ opacity: 0, y: 10 }}
                 className="absolute top-full z-1000 flex w-full flex-col rounded-b-2xl border-2 bg-white p-2 shadow-md"
               >
-                {endsFiltered.map((end) => (
-                  <li
-                    className="cursor-pointer p-2 hover:bg-gray-500"
-                    onClick={() => {
-                      search.setEndLocation(end);
-                      setEndFocus(false);
-                    }}
-                    key={end}
-                  >
-                    {end}
-                  </li>
-                ))}
+                {loading ? (
+                  <li className="p-2 text-gray-500">Loading...</li>
+                ) : error ? (
+                  <li className="p-2 text-red-500">Error loading stations</li>
+                ) : endsFiltered.length === 0 ? (
+                  <li className="p-2 text-gray-500">No results</li>
+                ) : (
+                  endsFiltered.map((end) => (
+                    <li
+                      className="cursor-pointer p-2 hover:bg-gray-500"
+                      onClick={() => {
+                        search.setEndLocation(end.name);
+                        setEndFocus(false);
+                      }}
+                      key={end.id}
+                    >
+                      {end.name}
+                    </li>
+                  ))
+                )}
               </motion.ol>
             )}
           </AnimatePresence>

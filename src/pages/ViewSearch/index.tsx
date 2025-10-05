@@ -18,8 +18,8 @@ export default function ViewSearch() {
   const { route } = useContext(DetailsContext);
 
   const searched =
-    startLocation !== '' &&
-    endLocation !== '' &&
+    (startLocation !== '' &&
+    endLocation !== '') &&
     (tab === 'searchRoute' || tab === 'searchVehicle');
 
   const showRoutesList = useMemo(() => searched && route === null, [searched, route]);
@@ -37,42 +37,44 @@ export default function ViewSearch() {
     <>
       {/* Search bar */}
       <AnimatePresence initial={false} mode="wait">
-        <motion.div
-          className="w-full"
-          key={tab}
-          initial={{ height: '0rem' }}
-          animate={{ height: 'auto' }}
-          exit={{ height: '0rem' }}
-        >
-          {tab === 'searchRoute' && (
-            <motion.div
-              layout
-              className="w-full"
-              key="routeInput"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-            >
-              <RouteInput />
-            </motion.div>
-          )}
+        {(
+          <motion.div
+            className="w-full"
+            key={tab}
+            initial={{ height: '0rem' }}
+            animate={{ height: 'auto' }}
+            exit={{ height: '0rem' }}
+          >
+            {tab === 'searchRoute' && (
+              <motion.div
+                layout
+                className="w-full"
+                key="routeInput"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+              >
+                <RouteInput />
+              </motion.div>
+            )}
 
-          {tab === 'searchVehicle' && (
-            <motion.div
-              layout
-              className="w-full"
-              key="vehicleInput"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-            >
-              <VehicleInput />
-            </motion.div>
-          )}
-        </motion.div>
+            {tab === 'searchVehicle' && (
+              <motion.div
+                layout
+                className="w-full"
+                key="vehicleInput"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+              >
+                <VehicleInput />
+              </motion.div>
+            )}
+          </motion.div>
+        )}
       </AnimatePresence>
 
-      {(tab === 'searchRoute' || tab === 'searchVehicle') && (
+      {(tab === 'searchRoute' || tab === 'searchVehicle') && !showRoutesList && !showRoutePreview && (
         <motion.div
           layout
           className="flex w-full justify-between"
