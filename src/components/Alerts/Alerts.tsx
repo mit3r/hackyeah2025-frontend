@@ -13,7 +13,7 @@ export default function Alerts() {
   const websocket = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    websocket.current = new WebSocket('ws://localhost:8080/alerts');
+    websocket.current = new WebSocket(`${import.meta.env.VITE_WS_URL}/alerts`);
 
     websocket.current.onopen = () => {
       console.log('WebSocket connected');

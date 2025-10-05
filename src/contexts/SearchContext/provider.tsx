@@ -24,34 +24,36 @@ export default function SearchProvider(props: { children: React.ReactNode }) {
     try {
       setConnectionsLoading(true);
       setConnectionsError(null);
-      
+
       const response = await fetch(
-        `http://localhost:8000/api/connections/?from_station=${fromStationId}&to_station=${toStationId}`
+        `${import.meta.env.VITE_BACKEND_URL}/api/connections/?from_station=${fromStationId}&to_station=${toStationId}`,
       );
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch connections');
       }
-      
+
       const data = await response.json();
-      
+
       console.log('API Response:', data);
-      
+
       // Extract connections from the response
       const allConnections: Connection[] = [];
-      
+
       // Process direct connections
       if (data.direct_connections && Array.isArray(data.direct_connections)) {
         const directConnections = data.direct_connections.map((dc: any) => ({
           departure_station: dc.departure_station,
           arrival_station: dc.arrival_station,
-          segments: [{
-            from_station: dc.departure_station,
-            to_station: dc.arrival_station,
-            distance_km: dc.distance_km,
-            time_minutes: dc.travel_time_minutes,
-            max_speed_kmh: 0
-          }],
+          segments: [
+            {
+              from_station: dc.departure_station,
+              to_station: dc.arrival_station,
+              distance_km: dc.distance_km,
+              time_minutes: dc.travel_time_minutes,
+              max_speed_kmh: 0,
+            },
+          ],
           total_distance_km: dc.distance_km,
           total_travel_time_minutes: dc.travel_time_minutes,
           stops_count: dc.stops_count,
@@ -60,19 +62,19 @@ export default function SearchProvider(props: { children: React.ReactNode }) {
           departure_time: dc.departure_time,
           arrival_time: dc.arrival_time,
           route_points: dc.route_points,
-          next_journeys: dc.next_journeys
+          next_journeys: dc.next_journeys,
         }));
         allConnections.push(...directConnections);
       }
-      
+
       // Process connections with transfers
       if (data.connections_with_transfers && Array.isArray(data.connections_with_transfers)) {
         allConnections.push(...data.connections_with_transfers);
       }
-      
+
       console.log('Processed connections:', allConnections);
       setConnections(allConnections.slice(0, 10)); // Limit to 10 connections max
-      
+
       if (allConnections.length === 0) {
         console.warn('No connections found in API response');
       }

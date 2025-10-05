@@ -10,12 +10,12 @@ export default function useStations() {
     const fetchStations = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:8000/api/stations/');
-        
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/stations/`);
+
         if (!response.ok) {
           throw new Error('Failed to fetch stations');
         }
-        
+
         const data: Station[] = await response.json();
         setAllStations(data);
         const stationNames = data.map((station) => station.name);
@@ -31,30 +31,32 @@ export default function useStations() {
     fetchStations();
   }, []);
 
-  const filterStations = useCallback((query: string): Station[] => {
-    if (!query.trim()) {
+  const filterStations = useCallback(
+    (query: string): Station[] => {
+      if (!query.trim()) {
+        return allStations.sort((a, b) => a.name.localeCompare(b.name)).slice(0, 5);
+      }
+
       return allStations
-        .sort((a, b) => a.name.localeCompare(b.name))
+        .filter((station) => station.name.toLowerCase().includes(query.toLowerCase()))
         .slice(0, 5);
-    }
-    
-    return allStations
-      .filter((station) => 
-        station.name.toLowerCase().includes(query.toLowerCase())
-      )
-      .slice(0, 5); 
-  }, [allStations]);
+    },
+    [allStations],
+  );
 
-  const getStationByName = useCallback((name: string): Station | undefined => {
-    return allStations.find(station => station.name === name);
-  }, [allStations]);
+  const getStationByName = useCallback(
+    (name: string): Station | undefined => {
+      return allStations.find((station) => station.name === name);
+    },
+    [allStations],
+  );
 
-  return { 
-    stations, 
+  return {
+    stations,
     allStations,
-    filterStations, 
+    filterStations,
     getStationByName,
-    loading, 
-    error 
+    loading,
+    error,
   };
 }
