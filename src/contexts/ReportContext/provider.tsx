@@ -4,7 +4,7 @@ import ReportForm from '@contexts/ReportContext/ReportForm';
 import { AnimatePresence, motion } from 'motion/react';
 
 export default function ReportProvider({ children }: { children: React.ReactNode }) {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   const showForm = () => setIsVisible(true);
   const hideForm = () => setIsVisible(false);

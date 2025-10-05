@@ -1,7 +1,9 @@
 import { SearchContext } from '@contexts/SearchContext';
 import { AnimatePresence, motion } from 'motion/react';
 import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import useStations from '../../hooks/useStations';
 import useStations from '../../hooks/useStations';
 
 export default function RouteInput() {
@@ -19,14 +21,20 @@ export default function RouteInput() {
   useEffect(() => {
     const startStation = getStationByName(search.startLocation);
     const endStation = getStationByName(search.endLocation);
-    
+
     if (startStation && endStation && startStation.id !== endStation.id) {
       search.searchConnections(startStation.id, endStation.id);
     } else if (search.startLocation || search.endLocation) {
       // Only clear if there are some inputs but invalid combination
       search.clearConnections();
     }
-  }, [search.startLocation, search.endLocation, getStationByName, search.searchConnections, search.clearConnections]);
+  }, [
+    search.startLocation,
+    search.endLocation,
+    getStationByName,
+    search.searchConnections,
+    search.clearConnections,
+  ]);
 
   return (
     <div className="my-shadow w-full rounded-3xl bg-white p-4">
@@ -51,11 +59,17 @@ export default function RouteInput() {
               setStartFocus(true);
               setEndFocus(false);
             }}
-            value={search.startLocation}
-            onChange={(e) => search.setStartLocation(e.target.value)}
+            value={startLocation}
+            onChange={(e) => setStartLocation(e.target.value)}
           />
 
-          <span className="px-2" onClick={() => search.setStartLocation('')}>
+          <span
+            className="px-2"
+            onClick={() => {
+              setStartLocation('');
+              setStartFocus(false);
+            }}
+          >
             <img src="close_24dp_CCCCCC_FILL0_wght400_GRAD0_opsz24.svg" alt="" className="invert" />
           </span>
 
@@ -115,11 +129,19 @@ export default function RouteInput() {
               setEndFocus(true);
               setStartFocus(false);
             }}
-            value={search.endLocation}
-            onChange={(e) => search.setEndLocation(e.target.value)}
+            value={endLocation}
+            onChange={(e) => {
+              setEndLocation(e.target.value);
+            }}
           />
 
-          <span className="px-2" onClick={() => search.setEndLocation('')}>
+          <span
+            className="px-2"
+            onClick={() => {
+              setEndLocation('');
+              setEndFocus(false);
+            }}
+          >
             <img src="close_24dp_CCCCCC_FILL0_wght400_GRAD0_opsz24.svg" alt="" className="invert" />
           </span>
 

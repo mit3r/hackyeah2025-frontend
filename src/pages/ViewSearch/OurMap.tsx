@@ -1,5 +1,6 @@
 import { MapContainer, TileLayer } from 'react-leaflet';
 import { twMerge } from 'tailwind-merge';
+import MapTracks from './MapTracks';
 
 const position: [number, number] = [50.06784, 19.9913];
 
@@ -24,6 +25,8 @@ export default function OurMap(props: Props) {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>, Service by <a href="http://www.openrailwaymap.org/">OpenRailwayMap</a>'
         url="https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png"
       />
+
+      <MapTracks />
     </MapContainer>
   );
 }

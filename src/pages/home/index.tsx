@@ -1,3 +1,4 @@
+import { DetailsContext } from '@contexts/DetailsContext';
 import { TabContext } from '@contexts/TabContext';
 import ViewProfile from '@pages/ViewProfile';
 import ViewSearch from '@pages/ViewSearch';

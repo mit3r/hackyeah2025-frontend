@@ -110,6 +110,7 @@ export default function RoutePreview() {
         {route !== null &&
           route.map((segment, index) => (
             <Segment segment={segment} key={index} end={index === route.length - 1} />
+            <Segment segment={segment} key={index} end={index === route.length - 1} />
           ))}
       </div>
     </div>
