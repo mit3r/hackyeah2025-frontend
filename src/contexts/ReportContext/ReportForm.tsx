@@ -1,20 +1,33 @@
 import PopButton from '@components/Alerts/PopButton';
-import { useState } from 'react';
+import { AlertContext } from '@contexts/AlertContext/context';
+import { useContext, useRef, useState } from 'react';
 
-const reports = ['Malfunction', 'Delay', 'Accident', 'Overcrowding'];
+const reports = ['Usterka', 'Opóźnienie', 'Wypadek', 'Przeciążenie', 'Inne'];
 
 const priorityColors = ['#00cc00', '#66cc00', '#cccc00', '#cc6600', '#cc0000'];
 
 export default function ReportForm({ onClose }: { onClose?: () => void }) {
+  const it = useRef<number | null>(null);
+
+  const { setAlert } = useContext(AlertContext);
+
   const [priority, setPriority] = useState<number>(1); //1-5
 
-  const handleSubmit = () => {};
+  const handleSubmit = () => {
+    if (onClose) onClose();
+
+    it.current = setTimeout(() => {
+      setAlert('Thanks');
+
+      console.log('Report submitted');
+    }, 3000);
+  };
 
   return (
     <div className="absolute z-1050 flex h-full w-full flex-col justify-end p-4 backdrop-brightness-50">
       <div className="my-shadow flex flex-col gap-4 rounded-2xl bg-gray-200 p-6">
         <span className="flex items-center justify-between">
-          <h1 className="text-2xl">Adding a report</h1>
+          <h1 className="text-2xl">Dodawanie zgłoszenia</h1>
           <img
             className="invert"
             onClick={onClose}
@@ -23,7 +36,7 @@ export default function ReportForm({ onClose }: { onClose?: () => void }) {
           />
         </span>
         <label className="text-xl" htmlFor="">
-          Type of report
+          Typ zgłoszenia
         </label>
         <select className="rounded-2xl border-2 p-2 text-xl" name="" id="">
           {reports.map((report) => (
@@ -34,11 +47,17 @@ export default function ReportForm({ onClose }: { onClose?: () => void }) {
         </select>
 
         <label className="text-xl" htmlFor="">
-          Description
+          Opis
         </label>
-        <textarea className="rounded-2xl border-2 p-2 text-xl" name="" id="" rows={4}></textarea>
+        <textarea
+          className="rounded-2xl border-2 p-2 text-xl"
+          placeholder="Opis zgłoszenia"
+          name=""
+          id=""
+          rows={4}
+        ></textarea>
 
-        <label htmlFor="">Priority</label>
+        <label htmlFor="">Priorytet</label>
 
         <div className="flex gap-2">
           {new Array(5).fill(0).map((_, i) => (
@@ -51,11 +70,11 @@ export default function ReportForm({ onClose }: { onClose?: () => void }) {
           ))}
         </div>
 
-        <label htmlFor="">Estimated Time</label>
-        <input type="text" placeholder="1 hour" className="rounded-2xl border-2 p-2 text-xl" />
+        <label htmlFor="">Szacowany czas</label>
+        <input type="text" placeholder="1 godzina" className="rounded-2xl border-2 p-2 text-xl" />
 
         <PopButton onClick={handleSubmit}>
-          <span className="text-xl">Submit Report</span>
+          <span className="text-xl">Zgłoś problem</span>
         </PopButton>
       </div>
     </div>

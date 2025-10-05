@@ -1,34 +1,33 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { AlertContext } from '@contexts/AlertContext/context';
+import { useCallback, useContext } from 'react';
 import LongDelay from './LongDelay';
 import Malfunction from './Malfunction';
-import Overcrowded from './Overcrowded';
 import NoAirConditioning from './NoAirConditioning';
+import Overcrowded from './Overcrowded';
 import Thanks from './Thanks';
 
-export type Alert = 'LongDelay' | 'NoAirConditioning' | 'Overcrowded' | 'Malfunction' | 'Thanks';
-
 export default function Alerts() {
-  const [alerts, setAlerts] = useState<Alert | null>(null);
+  const { alert, setAlert } = useContext(AlertContext);
 
-  const websocket = useRef<WebSocket | null>(null);
+  // const websocket = useRef<WebSocket | null>(null);
 
-  useEffect(() => {
-    websocket.current = new WebSocket(`${import.meta.env.VITE_WS_URL}/alerts`);
+  // useEffect(() => {
+  //   websocket.current = new WebSocket(`${import.meta.env.VITE_WS_URL}/alerts`);
 
-    websocket.current.onopen = () => {
-      console.log('WebSocket connected');
-    };
+  //   websocket.current.onopen = () => {
+  //     console.log('WebSocket connected');
+  //   };
 
-    websocket.current.onmessage = (event) => {
-      const alert: Alert = JSON.parse(event.data) as Alert;
+  //   websocket.current.onmessage = (event) => {
+  //     const alert: Alert = JSON.parse(event.data) as Alert;
 
-      setAlerts(alert);
-    };
-  }, []);
+  //     setAlerts(alert);
+  //   };
+  // }, []);
 
-  const close = useCallback(() => setAlerts(null), []);
+  const close = useCallback(() => setAlert(null), []);
 
-  switch (alerts) {
+  switch (alert) {
     case 'LongDelay':
       return <LongDelay onClose={close} />;
     case 'NoAirConditioning':
@@ -39,6 +38,8 @@ export default function Alerts() {
       return <Malfunction onClose={close} />;
     case 'Thanks':
       return <Thanks onClose={close} />;
+    case null:
+      return null;
     default:
       return null;
   }

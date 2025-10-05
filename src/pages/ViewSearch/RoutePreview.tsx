@@ -1,13 +1,9 @@
 // import { Route } from '@type/routes';
-import { useContext, useState } from 'react';
-import Switch from './Switch';
-import { useTranslation } from 'react-i18next';
 import { DetailsContext } from '@contexts/DetailsContext';
 import { Route } from '@type/routes';
+import { useContext } from 'react';
 
 export default function RoutePreview() {
-  const [t] = useTranslation('index');
-  const [mode, setMode] = useState<'trains' | 'route'>('route');
   const { route, setRoute } = useContext(DetailsContext);
 
   const handleBack = () => {
@@ -56,7 +52,7 @@ export default function RoutePreview() {
     : null;
 
   return (
-    <div className="my-shadow flex h-[calc(100%-7rem)] w-full flex-col gap-2 overflow-y-auto rounded-3xl bg-white p-2">
+    <div className="my-shadow flex h-full w-full flex-col gap-2 overflow-y-auto rounded-3xl bg-white p-2">
       {/* Header with back button */}
       <div className="flex items-center justify-between p-2">
         <button
@@ -94,12 +90,12 @@ export default function RoutePreview() {
         )}
       </div>
 
-      <Switch
+      {/* <Switch
         onChange={(option) => setMode(option as 'trains' | 'route')}
         options={['trains', 'route']}
         labels={[t('train'), t('route')]}
         choosen={mode}
-      />
+      /> */}
 
       {totalInfo && (
         <div className="mb-2 rounded-2xl bg-blue-50 p-4">
